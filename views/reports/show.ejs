@@ -1,0 +1,149 @@
+<%- include('../layouts/header') %>
+
+<nav class="mb-5 flex items-center gap-2 text-xs font-medium text-slate-400 dark:text-slate-500" aria-label="Navegação estrutural">
+    <a href="<%= url('/denuncias') %>" class="inline-flex items-center gap-1 transition hover:text-blue-600 dark:hover:text-blue-400">
+        <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"/></svg>
+        As minhas denúncias
+    </a>
+    <span aria-hidden="true">/</span>
+    <span class="text-slate-700 dark:text-slate-200">Denúncia #<%= report.id %></span>
+</nav>
+
+<header class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+    <div>
+        <div class="flex flex-wrap items-center gap-2">
+            <span class="font-mono text-xs font-bold text-slate-400 dark:text-slate-500">#<%= report.id %></span>
+            <span class="ca-badge <%= statusClasses(report.status) %>"><%= statusLabel(report.status) %></span>
+            <% if (report.priority === 'urgente' || report.priority === 'muito_urgente') { %>
+                <span class="ca-badge <%= priorityClasses(report.priority) %>">
+                    <span aria-hidden="true">🚨</span> <%= priorityLabel(report.priority) %>
+                </span>
+            <% } %>
+        </div>
+        <h1 class="ca-page-title mt-2"><%= report.category_name %></h1>
+        <p class="ca-muted mt-1">
+            Registada a <%= formatDateTime(report.created_at) %> · Bairro <%= report.neighborhood || 'não indicado' %>
+        </p>
+    </div>
+
+    <a href="https://www.openstreetmap.org/?mlat=<%= report.latitude %>&mlon=<%= report.longitude %>#map=18"
+       target="_blank" rel="noopener noreferrer" class="ca-btn-secondary self-start">
+        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>
+        Abrir no mapa
+    </a>
+</header>
+
+<!-- Progresso -->
+<% if (report.status === 'rejeitada') { %>
+    <div class="mb-6 flex items-start gap-3 rounded-2xl border border-rose-200 bg-rose-50 p-4 text-rose-800 dark:border-rose-900 dark:bg-rose-950/40 dark:text-rose-200">
+        <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-rose-600 text-white">
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </span>
+        <div class="text-xs leading-relaxed sm:text-sm">
+            <strong class="block font-bold">Denúncia rejeitada pelo município</strong>
+            Consulta o histórico abaixo ou contacta o Conselho Municipal para obter mais detalhes.
+        </div>
+    </div>
+<% } else { %>
+    <section class="ca-card ca-card-pad mb-6">
+        <h2 class="ca-eyebrow mb-4">Progresso do atendimento</h2>
+        <%
+            const etapas = [
+                { id: 'recebida', label: 'Recebida' },
+                { id: 'em_analise', label: 'Em Análise' },
+                { id: 'atribuida', label: 'Atribuída' },
+                { id: 'em_execucao', label: 'Em execução' },
+                { id: 'resolvida', label: 'Resolvida' },
+            ];
+            let statusIdx = etapas.findIndex(function (e) { return e.id === report.status; });
+            if (report.status === 'fechada') statusIdx = etapas.length - 1;
+        %>
+
+        <ol class="grid grid-cols-2 gap-2 sm:grid-cols-5">
+            <% etapas.forEach(function(etapa, idx) {
+                const concluida = statusIdx >= idx;
+                const atual = statusIdx === idx;
+            %>
+                <li class="rounded-xl border p-3 text-center text-[11px] transition <%= atual ? 'border-blue-500 bg-blue-50 font-bold text-blue-800 dark:border-blue-500 dark:bg-blue-950/50 dark:text-blue-200' : (concluida ? 'border-emerald-200 bg-emerald-50/70 text-emerald-700 dark:border-emerald-900 dark:bg-emerald-950/30 dark:text-emerald-300' : 'border-slate-200 text-slate-400 dark:border-slate-700 dark:text-slate-500') %>">
+                    <span class="mx-auto mb-1.5 flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-bold <%= atual ? 'bg-blue-600 text-white' : (concluida ? 'bg-emerald-500 text-white' : 'bg-slate-100 text-slate-400 dark:bg-slate-800 dark:text-slate-500') %>">
+                        <% if (concluida) { %>
+                            <svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+                        <% } else { %>
+                            <%= idx + 1 %>
+                        <% } %>
+                    </span>
+                    <%= etapa.label %>
+                </li>
+            <% }) %>
+        </ol>
+    </section>
+<% } %>
+
+<div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+    <!-- Registo -->
+    <section class="ca-card ca-card-pad">
+        <h2 class="font-display text-base font-bold text-slate-900 dark:text-white">Registo do problema</h2>
+
+        <% if (report.photo_path) { %>
+            <img src="<%= url(report.photo_path) %>" alt="Fotografia da ocorrência <%= report.category_name %>" loading="lazy"
+                 class="mt-4 max-h-96 w-full rounded-xl border border-slate-200 object-cover dark:border-slate-700">
+        <% } %>
+
+        <div class="mt-4 rounded-xl border border-slate-100 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-900/60">
+            <p class="ca-eyebrow mb-1">Descrição do cidadão</p>
+            <p class="whitespace-pre-line text-sm leading-relaxed text-slate-700 dark:text-slate-300"><%- nl2br(report.description) %></p>
+        </div>
+
+        <dl class="mt-4 grid grid-cols-2 gap-2.5 text-xs">
+            <div class="rounded-xl border border-slate-100 p-3 dark:border-slate-800">
+                <dt class="font-medium text-slate-400 dark:text-slate-500">Bairro</dt>
+                <dd class="mt-0.5 font-semibold text-slate-800 dark:text-slate-100"><%= report.neighborhood || 'Não indicado' %></dd>
+            </div>
+            <div class="rounded-xl border border-slate-100 p-3 dark:border-slate-800">
+                <dt class="font-medium text-slate-400 dark:text-slate-500">Município</dt>
+                <dd class="mt-0.5 font-semibold text-slate-800 dark:text-slate-100"><%= report.municipality_name || 'Maputo' %></dd>
+            </div>
+            <div class="rounded-xl border border-slate-100 p-3 dark:border-slate-800">
+                <dt class="font-medium text-slate-400 dark:text-slate-500">Departamento</dt>
+                <dd class="mt-0.5 font-semibold text-slate-800 dark:text-slate-100"><%= report.department_name || 'Aguarda triagem' %></dd>
+            </div>
+            <div class="rounded-xl border border-slate-100 p-3 dark:border-slate-800">
+                <dt class="font-medium text-slate-400 dark:text-slate-500">Técnico</dt>
+                <dd class="mt-0.5 font-semibold text-slate-800 dark:text-slate-100"><%= report.technician_name || 'Por atribuir' %></dd>
+            </div>
+        </dl>
+    </section>
+
+    <!-- Histórico -->
+    <section class="ca-card ca-card-pad">
+        <h2 class="flex items-center gap-2 font-display text-base font-bold text-slate-900 dark:text-white">
+            <svg class="h-4 w-4 text-blue-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Linha do tempo
+        </h2>
+
+        <% if (!history || !history.length) { %>
+            <p class="mt-4 rounded-xl border border-dashed border-slate-200 p-4 text-xs text-slate-500 dark:border-slate-700 dark:text-slate-400">
+                Ainda não há atualizações registadas. A denúncia está na fila de triagem do município.
+            </p>
+        <% } else { %>
+            <ol class="relative mt-4 space-y-4 pl-5 before:absolute before:bottom-2 before:left-[0.3rem] before:top-2 before:w-px before:bg-slate-200 dark:before:bg-slate-700">
+                <% history.forEach(function(entry) { %>
+                    <li class="relative">
+                        <span class="absolute -left-[1.05rem] top-1.5 h-2.5 w-2.5 rounded-full border-2 border-white bg-blue-500 shadow-sm dark:border-slate-900"></span>
+                        <div class="rounded-xl border border-slate-100 bg-slate-50/70 p-3 dark:border-slate-800 dark:bg-slate-900/60">
+                            <div class="flex flex-wrap items-center justify-between gap-1">
+                                <strong class="text-xs font-bold text-slate-800 dark:text-slate-100"><%= statusLabel(entry.new_status) %></strong>
+                                <span class="text-[10px] text-slate-400 dark:text-slate-500"><%= formatDateTime(entry.created_at) %></span>
+                            </div>
+                            <% if (entry.changed_by_name) { %>
+                                <p class="mt-0.5 text-[10px] text-slate-400 dark:text-slate-500">Por <%= entry.changed_by_name %></p>
+                            <% } %>
+                        </div>
+                    </li>
+                <% }) %>
+            </ol>
+        <% } %>
+    </section>
+</div>
+
+<%- include('../layouts/footer') %>

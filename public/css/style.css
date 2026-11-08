@@ -1,0 +1,182 @@
+/* Cidadão Ativo — ajustes visuais que os utilitários Tailwind não cobrem. */
+
+/* ---------- Mapa / Leaflet ---------- */
+#map,
+#reports-map,
+#heatmap,
+#location-picker {
+    border-radius: 1rem;
+    overflow: hidden;
+    background: #e2e8f0;
+}
+
+html.dark #map,
+html.dark #reports-map,
+html.dark #heatmap,
+html.dark #location-picker {
+    background: #0f172a;
+}
+
+.leaflet-container {
+    font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+    background: #e2e8f0;
+}
+
+.leaflet-popup-content-wrapper {
+    border-radius: 0.9rem;
+    padding: 0.15rem;
+    box-shadow: 0 18px 40px -18px rgba(15, 23, 42, 0.45);
+    border: 1px solid rgba(148, 163, 184, 0.25);
+}
+
+.leaflet-popup-content {
+    margin: 0.85rem 1rem;
+    line-height: 1.45;
+    font-size: 12px;
+    color: #334155;
+}
+
+.leaflet-popup-tip {
+    box-shadow: none;
+}
+
+html.dark .leaflet-popup-content-wrapper,
+html.dark .leaflet-popup-tip {
+    background: #0f172a;
+    color: #e2e8f0;
+    border-color: #1e293b;
+}
+
+html.dark .leaflet-popup-content {
+    color: #cbd5e1;
+}
+
+html.dark .leaflet-tile {
+    filter: brightness(0.72) invert(1) contrast(1.15) hue-rotate(180deg) saturate(0.35);
+}
+
+html.dark .leaflet-control-attribution {
+    background: rgba(15, 23, 42, 0.8) !important;
+    color: #94a3b8 !important;
+}
+
+html.dark .leaflet-control-attribution a {
+    color: #93c5fd !important;
+}
+
+html.dark .leaflet-bar a,
+html.dark .leaflet-control-layers {
+    background: #0f172a;
+    color: #e2e8f0;
+    border-color: #334155;
+}
+
+html.dark .leaflet-control-layers-expanded {
+    background: #0f172a;
+    color: #e2e8f0;
+}
+
+/* Marcador circular moderno usado pelo mapa público. */
+.ca-map-marker {
+    background: transparent;
+    border: 0;
+}
+
+.ca-map-marker span {
+    display: block;
+    width: 18px;
+    height: 18px;
+    border-radius: 9999px;
+    border: 3px solid #ffffff;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.18), 0 4px 10px rgba(15, 23, 42, 0.35);
+}
+
+html.dark .ca-map-marker span {
+    border-color: #0f172a;
+}
+
+/* ---------- Formulários ---------- */
+select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%2364748b' stroke-opacity='0.8' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 1.1rem;
+    padding-right: 2.5rem;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+html.dark select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%2394a3b8' stroke-opacity='0.9' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+}
+
+/* ---------- Scrollbar discreta ---------- */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
+}
+
+html.dark * {
+    scrollbar-color: #334155 transparent;
+}
+
+*::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+*::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 9999px;
+}
+
+html.dark *::-webkit-scrollbar-thumb {
+    background: #334155;
+}
+
+/* ---------- Chatbot ---------- */
+.ca-typing-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 9999px;
+    background: currentColor;
+    animation: ca-typing 1.2s infinite ease-in-out;
+}
+
+.ca-typing-dot:nth-child(2) {
+    animation-delay: 0.15s;
+}
+
+.ca-typing-dot:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+@keyframes ca-typing {
+    0%,
+    80%,
+    100% {
+        transform: translateY(0);
+        opacity: 0.35;
+    }
+    40% {
+        transform: translateY(-4px);
+        opacity: 1;
+    }
+}
+
+/* ---------- Detalhes ---------- */
+summary::-webkit-details-marker {
+    display: none;
+}
+
+/* Transição suave do painel móvel do menu. */
+[data-mobile-menu] {
+    transform-origin: top;
+}
+
+/* Ícones inline herdarem a cor do texto. */
+.icon {
+    width: 1.1em;
+    height: 1.1em;
+    flex-shrink: 0;
+}

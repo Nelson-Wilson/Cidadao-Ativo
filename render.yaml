@@ -1,0 +1,54 @@
+services:
+  - type: web
+    name: cidadao-ativo
+    runtime: node
+    plan: free
+    buildCommand: npm ci --include=dev && npm run build:css
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: TRUST_PROXY
+        value: 1
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: APP_URL
+        sync: false
+
+      # MySQL no Railway. Preenche com MYSQLHOST/MYSQLPORT/... do serviço.
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        sync: false
+      - key: DB_DATABASE
+        sync: false
+      - key: DB_USERNAME
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_SSL
+        sync: false
+      - key: DB_SSL_REJECT_UNAUTHORIZED
+        value: "false"
+
+      # Supabase Storage (bucket público com nomes aleatórios).
+      - key: STORAGE_DRIVER
+        value: supabase
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: SUPABASE_STORAGE_BUCKET
+        value: cidadao-ativo
+
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: AI_MODEL
+        value: gemini-3.6-flash
+      - key: AI_MODEL_FALLBACK
+        value: gemini-3.5-flash-lite
+      - key: AI_THINKING_LEVEL
+        value: LOW
+      - key: SEED_PASSWORD
+        sync: false

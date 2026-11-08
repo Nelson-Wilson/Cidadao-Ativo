@@ -1,0 +1,143 @@
+<%- include('../../layouts/header') %>
+
+<header class="mb-6">
+    <span class="inline-flex items-center gap-1.5 rounded-full border border-blue-200 bg-blue-50 px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide text-blue-700 dark:border-blue-800 dark:bg-blue-950/60 dark:text-blue-300">
+        Gestão municipal
+    </span>
+    <h1 class="ca-page-title mt-2">Gestão de denúncias</h1>
+    <p class="ca-muted mt-1">Triagem, atribuição de técnicos e supervisão das ocorrências municipais.</p>
+</header>
+
+<!-- Filtros -->
+<section class="ca-card mb-4 p-4 sm:p-5">
+    <form method="GET" class="grid grid-cols-1 items-end gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div>
+            <label for="filtro-categoria" class="ca-label">Categoria</label>
+            <select id="filtro-categoria" name="id_categoria" data-auto-submit class="ca-input">
+                <option value="">Todas as categorias</option>
+                <% categories.forEach(function(category) { %>
+                    <option value="<%= category.id %>" <%= String(filters.id_categoria) === String(category.id) ? 'selected' : '' %>>
+                        <%= category.name %>
+                    </option>
+                <% }) %>
+            </select>
+        </div>
+
+        <div>
+            <label for="filtro-estado" class="ca-label">Estado</label>
+            <select id="filtro-estado" name="status" data-auto-submit class="ca-input">
+                <option value="">Todos os estados</option>
+                <% ['recebida','em_analise','atribuida','em_execucao','resolvida','fechada','rejeitada'].forEach(function(s) { %>
+                    <option value="<%= s %>" <%= filters.status === s ? 'selected' : '' %>><%= statusLabel(s) %></option>
+                <% }) %>
+            </select>
+        </div>
+
+        <div>
+            <label for="filtro-bairro" class="ca-label">Bairro</label>
+            <input type="text" id="filtro-bairro" name="bairro" value="<%= filters.bairro || '' %>"
+                   placeholder="Filtrar por bairro…" class="ca-input">
+        </div>
+
+        <div class="flex gap-2">
+            <button type="submit" class="ca-btn-primary flex-1">
+                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591l-5.432 5.432a2.25 2.25 0 00-.659 1.591v2.927a2.25 2.25 0 01-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 00-.659-1.591L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z"/></svg>
+                Filtrar
+            </button>
+            <% if (filters.id_categoria || filters.status || filters.bairro) { %>
+                <a href="<%= url('/municipio/denuncias') %>" class="ca-btn-secondary">Limpar</a>
+            <% } %>
+        </div>
+    </form>
+</section>
+
+<% const lista = (typeof itens !== 'undefined' ? itens : (typeof items !== 'undefined' ? items : [])); %>
+
+<% if (!lista.length) { %>
+    <div class="ca-card flex flex-col items-center px-6 py-16 text-center">
+        <span class="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-2xl dark:bg-slate-800" aria-hidden="true">🔎</span>
+        <p class="mt-3 text-sm font-semibold text-slate-700 dark:text-slate-200">Nenhuma ocorrência encontrada</p>
+        <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Ajusta os filtros ou limpa a pesquisa.</p>
+        <a href="<%= url('/municipio/denuncias') %>" class="ca-link mt-3 text-xs">Limpar todos os filtros →</a>
+    </div>
+<% } else { %>
+    <section class="ca-card overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="ca-table">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Categoria</th>
+                        <th scope="col">Prioridade</th>
+                        <th scope="col">Bairro</th>
+                        <th scope="col">Estado</th>
+                        <th scope="col">Técnico</th>
+                        <th scope="col">Data</th>
+                        <th scope="col" class="text-right">Ação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% lista.forEach(function(report) { %>
+                        <tr>
+                            <td class="font-mono text-[11px] font-bold text-slate-400 dark:text-slate-500">#<%= report.id %></td>
+                            <td>
+                                <span class="flex items-center gap-2 font-semibold text-slate-800 dark:text-slate-100">
+                                    <span class="text-base" aria-hidden="true"><%= categoryIcon(report.category_name) %></span>
+                                    <span class="max-w-[14rem] truncate"><%= report.category_name %></span>
+                                </span>
+                            </td>
+                            <td>
+                                <span class="ca-badge <%= priorityClasses(report.priority) %>"><%= priorityLabel(report.priority) %></span>
+                            </td>
+                            <td class="text-slate-600 dark:text-slate-300"><%= report.neighborhood || 'Maputo' %></td>
+                            <td>
+                                <span class="ca-badge <%= statusClasses(report.status) %>"><%= statusLabel(report.status) %></span>
+                            </td>
+                            <td class="text-slate-600 dark:text-slate-300">
+                                <% if (report.technician_name) { %>
+                                    <%= report.technician_name %>
+                                <% } else { %>
+                                    <span class="text-[11px] italic text-slate-400 dark:text-slate-500">Por atribuir</span>
+                                <% } %>
+                            </td>
+                            <td class="whitespace-nowrap text-[11px] text-slate-400 dark:text-slate-500"><%= formatDate(report.created_at) %></td>
+                            <td class="text-right">
+                                <a href="<%= url('/municipio/denuncias/' + report.id) %>"
+                                   class="inline-flex items-center gap-1 rounded-lg border border-blue-200 bg-blue-50 px-2.5 py-1 text-[11px] font-bold text-blue-700 transition hover:bg-blue-100 dark:border-blue-800 dark:bg-blue-950/50 dark:text-blue-300 dark:hover:bg-blue-950">
+                                    Gerir
+                                    <svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+                                </a>
+                            </td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <%
+        const curPage = typeof pagina !== 'undefined' ? pagina : (typeof page !== 'undefined' ? page : 1);
+        const perPg = typeof porPagina !== 'undefined' ? porPagina : (typeof perPage !== 'undefined' ? perPage : 15);
+        const totalPages = Math.ceil(total / perPg);
+        const queryExtra = (filters.id_categoria ? '&id_categoria=' + encodeURIComponent(filters.id_categoria) : '')
+            + (filters.status ? '&status=' + encodeURIComponent(filters.status) : '')
+            + (filters.bairro ? '&bairro=' + encodeURIComponent(filters.bairro) : '');
+    %>
+    <% if (totalPages > 1) { %>
+        <nav class="mt-4 flex items-center justify-center gap-1.5" aria-label="Paginação">
+            <% if (curPage > 1) { %>
+                <a href="<%= url('/municipio/denuncias?page=' + (curPage - 1) + queryExtra) %>" class="ca-btn-secondary px-3 py-2 text-xs">Anterior</a>
+            <% } %>
+            <% for (let p = 1; p <= totalPages; p++) { %>
+                <a href="<%= url('/municipio/denuncias?page=' + p + queryExtra) %>"
+                   class="flex h-9 w-9 items-center justify-center rounded-lg text-xs font-bold transition <%= p === curPage ? 'bg-blue-600 text-white shadow-sm' : 'border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800' %>"
+                   <% if (p === curPage) { %>aria-current="page"<% } %>><%= p %></a>
+            <% } %>
+            <% if (curPage < totalPages) { %>
+                <a href="<%= url('/municipio/denuncias?page=' + (curPage + 1) + queryExtra) %>" class="ca-btn-secondary px-3 py-2 text-xs">Seguinte</a>
+            <% } %>
+        </nav>
+    <% } %>
+<% } %>
+
+<%- include('../../layouts/footer') %>

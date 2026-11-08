@@ -1,0 +1,209 @@
+@import "tailwindcss";
+
+@source "../../views/**/*.ejs";
+@source "../../public/js/**/*.js";
+@source "../../src/**/*.js";
+
+/* Fontes vendorizadas (sem pedidos a terceiros em runtime). */
+@font-face {
+    font-family: "Inter";
+    font-style: normal;
+    font-weight: 100 900;
+    font-display: swap;
+    src: url("../fonts/inter-latin-var.woff2") format("woff2");
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+    font-family: "Plus Jakarta Sans";
+    font-style: normal;
+    font-weight: 200 800;
+    font-display: swap;
+    src: url("../fonts/plus-jakarta-sans-latin-var.woff2") format("woff2");
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+    --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font-display: "Plus Jakarta Sans", "Inter", ui-sans-serif, system-ui, sans-serif;
+
+    --shadow-soft: 0 1px 2px rgba(15, 23, 42, 0.04), 0 10px 30px -18px rgba(15, 23, 42, 0.18);
+    --shadow-card: 0 1px 3px rgba(15, 23, 42, 0.06), 0 20px 45px -24px rgba(15, 23, 42, 0.28);
+}
+
+@layer base {
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        @apply bg-slate-50 text-slate-900 antialiased dark:bg-slate-950 dark:text-slate-100;
+    }
+
+    ::selection {
+        @apply bg-blue-600/20 text-blue-950 dark:bg-blue-400/30 dark:text-white;
+    }
+
+    :focus-visible {
+        @apply outline-none ring-2 ring-blue-500 ring-offset-2 ring-offset-white dark:ring-offset-slate-950;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        html {
+            scroll-behavior: auto;
+        }
+
+        *,
+        *::before,
+        *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+        }
+    }
+}
+
+@layer components {
+    .ca-card {
+        @apply rounded-2xl border border-slate-200 bg-white shadow-soft dark:border-slate-800 dark:bg-slate-900;
+    }
+
+    .ca-card-hover {
+        @apply transition duration-200 hover:-translate-y-0.5 hover:border-blue-300 hover:shadow-card dark:hover:border-blue-700;
+    }
+
+    .ca-card-pad {
+        @apply p-5 sm:p-6;
+    }
+
+    .ca-eyebrow {
+        @apply text-[11px] font-bold uppercase tracking-[0.16em] text-slate-400 dark:text-slate-500;
+    }
+
+    .ca-page-title {
+        @apply font-display text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl dark:text-slate-50;
+    }
+
+    .ca-muted {
+        @apply text-sm text-slate-500 dark:text-slate-400;
+    }
+
+    .ca-label {
+        @apply mb-1.5 block text-xs font-semibold text-slate-600 dark:text-slate-300;
+    }
+
+    .ca-input {
+        @apply w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 shadow-xs transition placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-blue-400;
+    }
+
+    .ca-btn {
+        @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-500/20 disabled:cursor-not-allowed disabled:opacity-50;
+    }
+
+    .ca-btn-primary {
+        @apply inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-500/20 disabled:cursor-not-allowed disabled:opacity-50;
+    }
+
+    .ca-btn-secondary {
+        @apply inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-xs transition hover:border-slate-300 hover:bg-slate-50 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-500/20 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:border-slate-600 dark:hover:bg-slate-800;
+    }
+
+    .ca-btn-ghost {
+        @apply inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 hover:text-slate-900 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-500/20 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white;
+    }
+
+    .ca-btn-danger {
+        @apply inline-flex items-center justify-center gap-2 rounded-xl bg-rose-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-rose-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-rose-500/20;
+    }
+
+    .ca-btn-ai {
+        @apply inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:from-violet-700 hover:to-indigo-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-violet-500/20;
+    }
+
+    .ca-badge {
+        @apply inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[11px] font-semibold;
+    }
+
+    .ca-link {
+        @apply font-semibold text-blue-600 transition hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300;
+    }
+
+    .ca-nav-link {
+        @apply rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white;
+    }
+
+    .ca-nav-link-active {
+        @apply bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300;
+    }
+
+    .ca-chip {
+        @apply inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-medium text-slate-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300;
+    }
+
+    .ca-table {
+        @apply w-full text-left text-sm;
+    }
+
+    .ca-table thead {
+        @apply bg-slate-50 text-[11px] uppercase tracking-wider text-slate-500 dark:bg-slate-800/60 dark:text-slate-400;
+    }
+
+    .ca-table th {
+        @apply px-4 py-3 font-semibold;
+    }
+
+    .ca-table td {
+        @apply px-4 py-3.5;
+    }
+
+    .ca-table tbody tr {
+        @apply border-t border-slate-100 transition hover:bg-slate-50/70 dark:border-slate-800 dark:hover:bg-slate-800/40;
+    }
+
+    .ca-toast {
+        @apply pointer-events-auto flex items-start gap-3 rounded-xl border p-4 shadow-card backdrop-blur;
+    }
+
+    .ca-progress {
+        @apply h-2 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800;
+    }
+
+    .ca-progress-bar {
+        @apply h-full rounded-full bg-blue-600 transition-all duration-500;
+    }
+
+    .ca-skip-link {
+        @apply sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-slate-900 focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white;
+    }
+
+    .ca-icon-box {
+        @apply flex h-10 w-10 shrink-0 items-center justify-center rounded-xl;
+    }
+}
+
+@layer utilities {
+    .ca-animate-in {
+        animation: ca-fade-up 0.35s ease-out both;
+    }
+
+    .ca-no-scrollbar {
+        scrollbar-width: none;
+    }
+
+    .ca-no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+
+    @keyframes ca-fade-up {
+        from {
+            opacity: 0;
+            transform: translateY(8px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+}

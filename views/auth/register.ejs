@@ -1,0 +1,59 @@
+<%- include('../layouts/header') %>
+
+<div class="mx-auto max-w-xl">
+    <div class="mb-6 text-center">
+        <span class="inline-flex items-center gap-1.5 rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-blue-700 dark:border-blue-800 dark:bg-blue-950/60 dark:text-blue-300">
+            Participação cívica
+        </span>
+        <h1 class="ca-page-title mt-3">Cria a tua conta</h1>
+        <p class="ca-muted mx-auto mt-1.5 max-w-md">Junta-te aos cidadãos que ajudam a melhorar Maputo, um problema de cada vez.</p>
+    </div>
+
+    <div class="ca-card ca-card-pad">
+        <form method="POST" action="<%= url('/registar') %>" class="space-y-4">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+            <div>
+                <label for="name" class="ca-label">Nome completo</label>
+                <input type="text" name="nome" id="name" value="<%= old.nome || old.name || '' %>" required autocomplete="name"
+                       placeholder="O teu nome e apelido" class="ca-input">
+            </div>
+
+            <div>
+                <label for="email" class="ca-label">Email</label>
+                <input type="email" name="email" id="email" value="<%= old.email || '' %>" required autocomplete="email"
+                       placeholder="exemplo@dominio.co.mz" class="ca-input">
+            </div>
+
+            <div class="grid gap-4 sm:grid-cols-2">
+                <div>
+                    <label for="password" class="ca-label">Palavra-passe</label>
+                    <input type="password" name="senha" id="password" required minlength="8" autocomplete="new-password"
+                           placeholder="Mínimo 8 caracteres" class="ca-input">
+                </div>
+
+                <div>
+                    <label for="password_confirmation" class="ca-label">Confirmar palavra-passe</label>
+                    <input type="password" name="confirmacao_senha" id="password_confirmation" required minlength="8" autocomplete="new-password"
+                           placeholder="Repete a palavra-passe" class="ca-input">
+                </div>
+            </div>
+
+            <p class="rounded-xl border border-slate-100 bg-slate-50 p-3 text-[11px] leading-relaxed text-slate-500 dark:border-slate-800 dark:bg-slate-900/60 dark:text-slate-400">
+                Ao criar conta aceitas que a fotografia, a descrição e as coordenadas das tuas denúncias sejam partilhadas com os serviços municipais. Os teus dados de acesso nunca são publicados.
+            </p>
+
+            <button type="submit" class="ca-btn-primary w-full">
+                Criar conta
+                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12l-7.5 7.5M21 12H3"/></svg>
+            </button>
+        </form>
+
+        <div class="mt-5 border-t border-slate-100 pt-4 text-center text-xs text-slate-500 dark:border-slate-800 dark:text-slate-400">
+            Já tens conta?
+            <a href="<%= url('/login') %>" class="ca-link ml-1">Entrar</a>
+        </div>
+    </div>
+</div>
+
+<%- include('../layouts/footer') %>

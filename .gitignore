@@ -1,0 +1,28 @@
+# Dependências
+node_modules/
+
+# Ambiente e segredos
+.env
+.env.*
+!.env.example
+
+# Artefactos de execução
+coverage/
+public/uploads/
+*.log
+npm-debug.log*
+
+# Ferramentas e sistema
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+cidadao-ativo.code-workspace
+
+# Referências externas / entregáveis pesados
+cidadao-ativo/
+cidadão-ativo/
+Cidadao ativo.zip
+*.zip
+Comparacao_Cidadao_Ativo.xlsx
+UEM-ES-Teste de Software.pdf
